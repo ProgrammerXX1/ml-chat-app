@@ -1,49 +1,68 @@
 <template>
-  <div class="chat">
-    <div v-for="(msg, index) in messages" :key="index" class="message">
-      <p><strong>You:</strong> {{ msg.user }}</p>
-      <p><strong>Bot:</strong> {{ msg.bot }}</p>
-    </div>
+  <div>
+    <input type="file" @change="uploadFile" />
+    <p v-if="fileUploaded">📄 Файл загружен!</p>
 
-    <input
-      v-model="userInput"
-      @keydown.enter="sendMessage"
-      placeholder="Type your message..."
-    />
-    <button @click="sendMessage">Send</button>
+    <input v-model="message" placeholder="Введите вопрос" />
+    <button @click="sendMessage" :disabled="!fileUploaded || loading">
+      {{ loading ? "Ждём ответ..." : "Отправить" }}
+    </button>
+
+    <p v-if="response">Ответ: {{ response }}</p>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue'
-import axios from 'axios'
+<script>
+import axios from 'axios';
 
-const userInput = ref('')
-const messages = ref<{ user: string; bot: string }[]>([])
-
-const sendMessage = async () => {
-  if (!userInput.value.trim()) return
-
-  const currentMessage = userInput.value
-  userInput.value = ''
-
+export default {
+  data() {
+    return {
+      message: '',
+      response: '',
+      fileUploaded: false,
+      loading: false,
+    };
+  },
+  methods: {
+   async uploadFile(e) {
+  const file = e.target.files[0];
+  const form = new FormData();
+  form.append("file", file);
   try {
-    const res = await axios.post('http://localhost:8000/chat', {
-      message: currentMessage,
-    })
-
-    messages.value.push({
-      user: currentMessage,
-      bot: res.data.response,
-    })
+    const res = await axios.post("http://localhost:8000/upload", form);
+    if (res.data.status === "Файл загружен") {
+      this.fileUploaded = true;
+    } else {
+      alert("Файл не был принят сервером.");
+    }
   } catch (err) {
-    messages.value.push({
-      user: currentMessage,
-      bot: 'Error contacting backend',
-    })
+    alert("Ошибка при загрузке файла");
+    console.error(err);
   }
 }
+,
+    async sendMessage() {
+      if (!this.message.trim()) return;
+      this.loading = true;
+      this.response = "";
+      try {
+        const res = await axios.post("http://localhost:8000/chat", {
+          message: this.message,
+        });
+        this.response = res.data.response;
+      } catch (err) {
+        this.response = "Ошибка при получении ответа";
+        console.error(err);
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+};
 </script>
+
+
 <style scoped>
 .chat {
   max-width: 600px;

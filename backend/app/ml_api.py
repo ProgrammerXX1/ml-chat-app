@@ -1,44 +1,31 @@
-# backend/app/ml_api.py
-
 import requests
 
-# Version 3
+_uploaded_text: str = ""  # глобальное хранилище
+
+def store_uploaded_text(text: str):
+    global _uploaded_text
+    _uploaded_text = text.strip()
+
 def get_ml_response(user_input: str) -> str:
+    if not _uploaded_text:
+        return "Сначала загрузите файл."
+
+    prompt = f"""Вот контекст из документа:
+{_uploaded_text}
+
+Вопрос: {user_input}
+Ответ:"""
+
     try:
         response = requests.post(
             "http://localhost:11434/api/generate",
             json={
                 "model": "llama3",  # или llama2
-                "prompt": user_input,
+                "prompt": prompt,
                 "stream": False
             },
-            timeout=20
+            timeout=60
         )
-
-        print("Ollama ответ:", response.json())  # 👈 лог в консоль
         return response.json().get("response", "Нет ответа").strip()
-
     except Exception as e:
-        return f"Ошибка при обращении к Ollama: {e}"
-
-
-
-# Version 2
-# def get_ml_response(user_input: str) -> str:
-#     try:
-#         response = requests.post(
-#             "http://127.0.0.1:8001/predict",
-#             json={"message": user_input},
-#             timeout=5
-#         )
-#         return response.json().get("answer", "Нет ответа от ML API")
-#     except Exception as e:
-#         return f"Ошибка при запросе к ML API: {e}"
-
-# Version 1
-# Тут пример для результата без запроса к ML 
-# from fastapi import FastAPI
-# def get_ml_response(user_input: str) -> str:
-#     # Здесь будет вызов к LLM
-#     return f"Echo: {user_input}"
-
+        return f"Ошибка ML API: {e}"
