@@ -7,9 +7,6 @@ def store_uploaded_text(text: str):
     _uploaded_text = text.strip()
 
 def get_ml_response(user_input: str) -> str:
-    if not _uploaded_text:
-        return "Сначала загрузите файл."
-
     prompt = f"""Вот контекст из документа:
 {_uploaded_text}
 
