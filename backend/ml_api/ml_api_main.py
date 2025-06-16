@@ -8,4 +8,5 @@ class Request(BaseModel):
 
 @app.post("/predict")
 def predict(request: Request):
-    return {"answer": f"ML получил: {request.message}"}
+    
+    return {"answer": f"{request.message}"}
