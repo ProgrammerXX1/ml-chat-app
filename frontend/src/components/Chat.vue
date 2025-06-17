@@ -1,6 +1,6 @@
 <template>
   <div class="chat-container">
-    <h2 class="chat-title">🤖 ЧатБек</h2>
+    <h2 class="chat-title">🤖 ЧатБот</h2>
 
     <div class="upload-section">
       <label class="custom-file-upload">

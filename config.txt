@@ -1,0 +1,9 @@
+
+
+Run and Dev
+Front
+/ml-chat-app/frontend/ -> npm run dev
+Backend
+/ml-chat-app/backend/ -> uvicorn app.main:app --port 8000 --timeout-keep-alive 120 --limit-concurrency 10 --limit-max-requests 1000 --reload --workers 8с
+ML 
+/ml-chat-app/ml_api/ -> ml_api_main:app --port 8001 --reload
