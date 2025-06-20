@@ -1,0 +1,14 @@
+@"
+__pycache__/
+*.pyc
+.env
+.env.*
+*.sqlite3
+*.log
+node_modules/
+dist/
+.vscode/
+.idea/
+*.egg-info/
+docker-volumes/
+"@ | Out-File -Encoding utf8 .gitignore
