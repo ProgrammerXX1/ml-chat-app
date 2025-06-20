@@ -2,7 +2,7 @@ import json
 import re
 from deep_translator import GoogleTranslator
 from langdetect import detect
-from llm import get_llm
+from .llm import get_llm
 
 # 🔧 Безопасное извлечение JSON из произвольного текста
 def extract_json(text: str) -> dict:
