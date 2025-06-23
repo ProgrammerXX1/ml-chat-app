@@ -1,9 +1,9 @@
 import subprocess
-from RAK_ml.file_reader import read_file
-from RAK_ml.chunking import chunk_text
-from RAK_ml.indexer import embed_and_store
-from RAK_ml.retriever import retrieve_relevant_chunks
-from RAK_ml.qa_chain import generate_answer
+from rak_ml.file_reader import read_file
+from rak_ml.chunking import chunk_text
+from rak_ml.indexer import embed_and_store
+from rak_ml.retriever import retrieve_relevant_chunks
+from rak_ml.qa_chain import generate_answer
 
 def list_ollama_models():
     result = subprocess.run(["ollama", "list"], capture_output=True, text=True)

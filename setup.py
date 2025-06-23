@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="RAK_ml",
-    version="0.1.0",
+    name="rak_ml",
+    version="0.1.2",
     packages=find_packages(),
     install_requires=[
         "weaviate-client",
@@ -12,7 +12,7 @@ setup(
         "langdetect",
         "deep-translator",
     ],
-    author="Твоё имя",
+    author="Bek",
     description="RAG-система с Weaviate и LLM для локального использования",
     classifiers=[
         "Programming Language :: Python :: 3",

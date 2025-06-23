@@ -1,9 +1,18 @@
 import subprocess
 import json
 import requests
-# ✅ Класс OllamaProvider с возможностью выбора модели
+
+import os
+from dotenv import load_dotenv
+
+# Загружаем .env, если он есть
+load_dotenv()
+
+# Получаем URL из переменной среды или используем локальный по умолчанию
+OLLAMA_SERVER_URL = os.getenv("OLLAMA_SERVER_URL", "http://localhost:11434")
+
 class OllamaProvider:
-    def __init__(self, model: str = "llama3", server_url="http://192.168.0.50:11434"):
+    def __init__(self, model: str = "llama3", server_url=OLLAMA_SERVER_URL):
         self.model = model
         self.server_url = server_url
 
@@ -12,12 +21,26 @@ class OllamaProvider:
             response = requests.post(
                 f"{self.server_url}/api/generate",
                 json={"model": self.model, "prompt": prompt},
-                timeout=30
+                timeout=60,
+                stream=True  # 🧠 важный параметр!
             )
             response.raise_for_status()
-            return response.json()["response"]
+
+            full_text = ""
+            for line in response.iter_lines(decode_unicode=True):
+                if line:
+                    try:
+                        chunk = json.loads(line)
+                        full_text += chunk.get("response", "")
+                    except json.JSONDecodeError:
+                        continue  # игнорируем мусор
+
+            return full_text or "⚠️ Пустой ответ от модели"
+
         except Exception as e:
             return f"⚠️ Ошибка при запросе к серверу модели: {e}"
+
+
 
 # 🧩 Допустимые модели, которые ты загрузил
 AVAILABLE_MODELS = {
@@ -52,5 +75,12 @@ def get_llm(provider_name: str):
 
     raise ValueError(f"Неизвестный провайдер или модель: {provider_name}")
 def ollama_installed_models():
-    result = subprocess.run(["ollama", "list"], capture_output=True, text=True)
-    return [line.split()[0] for line in result.stdout.strip().splitlines()[1:]]
+    try:
+        result = subprocess.run(["ollama", "list"], capture_output=True, text=True, check=True)
+        lines = result.stdout.strip().splitlines()
+        if len(lines) <= 1:
+            return []
+        return [line.split()[0] for line in lines[1:]]
+    except Exception as e:
+        print(f"⚠️ Ошибка при вызове `ollama list`: {e}")
+        return []
