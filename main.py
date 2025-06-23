@@ -12,6 +12,7 @@ def list_ollama_models():
     return models
 
 def select_model(models):
+    
     print("\n📦 Доступные модели (ollama list):")
     for i, name in enumerate(models, start=1):
         print(f"{i}. {name}")

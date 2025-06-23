@@ -5,7 +5,11 @@ from typing import List
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-client = weaviate.Client("http://localhost:8080")
+from .config import WEAVIATE_URL
+
+# Инициализация клиента Weaviate и модели эмбеддингов
+client = weaviate.Client(WEAVIATE_URL)
+# client = weaviate.Client("http://localhost:8080")
 embedding_model = SentenceTransformer("sentence-transformers/paraphrase-MiniLM-L6-v2")
 
 def embed_and_store(chunks: List[str], namespace: str = "DocumentChunk"):

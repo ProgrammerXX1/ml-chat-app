@@ -1,7 +1,9 @@
 Моделька работает на основе GROK и обучается по заданному файлу и имеет свой ограничение по скольку юзается Grok может быть исползовано текущий ключ грома для теста
 
 1.Для запуска необходима задать вопрос и код запуска Python
- python main.py --file ./example.txt --question "Разрешается ли продолжать движение пассажирскому поезду при наличии ползунов на колесных парах?" --provider groq
+
+export WEAVIATE_URL=http://<IP_сервера>:8080
+python main.py
 2.Требуется запускать  docker weviate
 docker run -d -p 8080:8080 -e AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=true semitechnologies/weaviate:latest
 3.Взять ключ у GROK API KEY
